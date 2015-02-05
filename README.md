@@ -8,32 +8,12 @@ Por que eles mesmos não tem uma API completa? Não faço ideia! Mas isso não v
 
 Esse script deve trabalhar em conjunto com o PHP SDK oficial da moip: https://github.com/moiplabs/moip-php
 
-Como funciona
-===
-É bem simples. Tudo o que a API Javascript da Moip faz é validar os dados que
-você informa na função "MoipWidget" e então envia as informações para o servidor
-através de uma requisição HTTP (ajax).
-
-Então tudo que temos que fazer é uma requisição HTTP para o servidor da Moip que tudo funcionará!
-Por isso será necessário que você tenha o curl instalado para que tudo funcione.
-
-Diferenças
-===
-A única diferença entre a API javascript e este repositório é que a versão Javascript
-irá VALIDAR seus dados antes de enviar para o servidor deles (cpf, datas, etc). Este comportamento
-NÃO foi implementado nessa classe, então tenha certeza de enviar dados validados
-para o objeto.
-
-Se por acaso você enviar informações erradas para o servidor, nada de mais irá acontecer, você
-ainda receberá um objeto com uma mensagem de erro na resposta, mas a mensagem não será
-tão clara quanto a versão javascript.
-
-Resumindo... tenha certeza de enviar dados válidos.
-
-O código
+Exemplos
 ===
 
-Sem mais papo, aqui estão dois exemplos de código para cartão de crédito e outro para boleto:
+Se você quer saber mais como essa classe funciona, leia as seções mais abaixo.
+
+Aqui estão dois exemplos de código, um para cartão de crédito e outro para boleto:
 
 Exemplo com Cartão de Crédito
 -------
@@ -41,8 +21,8 @@ Exemplo com Cartão de Crédito
 require 'MoipCheckout.php';
 
 // o $token você pega com a SDK que a própria Moip disponibiliza: https://github.com/moiplabs/moip-php
-
 $checkout = new MoipCheckout($token);
+
 $checkout->sandbox = true; // mude para false quando entrar em produção
 $checkout->set(array(
   'Forma' => 'CartaoCredito',
@@ -71,15 +51,14 @@ if($data->StatusPagamento == 'Sucesso'){
 }
 ```
 
-
 Exemplo com Boleto Bancário
 -------
 ```php
 require 'MoipCheckout.php';
 
 // o $token você pega com a SDK que a própria Moip disponibiliza: https://github.com/moiplabs/moip-php
-
 $checkout = new MoipCheckout($token);
+
 $checkout->sandbox = true; // mude para false quando entrar em produção
 $checkout->set(array(
   'Forma' => 'BoletoBancario',
@@ -96,3 +75,25 @@ if($data->StatusPagamento == 'Sucesso'){
   exit($data['Mensagem'])
 }
 ```
+
+Como funciona
+===
+É bem simples. Tudo o que a API Javascript da Moip faz é validar os dados que
+você informa na função "MoipWidget" e então envia as informações para o servidor
+através de uma requisição HTTP (ajax).
+
+Então tudo que temos que fazer é uma requisição HTTP para o servidor da Moip que tudo funcionará!
+Por isso será necessário que você tenha o curl instalado para que tudo funcione.
+
+Diferença entre as API's
+---
+A única diferença entre a API javascript e este repositório é que a versão Javascript
+irá VALIDAR seus dados antes de enviar para o servidor deles (cpf, datas, etc). Este comportamento
+NÃO foi implementado nessa classe, então tenha certeza de enviar dados validados
+para o objeto.
+
+Se por acaso você enviar informações erradas para o servidor, nada de mais irá acontecer, você
+ainda receberá um objeto com uma mensagem de erro na resposta, mas a mensagem não será
+tão clara quanto a versão javascript.
+
+Resumindo... tenha certeza de enviar dados válidos.
