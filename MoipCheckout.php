@@ -75,6 +75,23 @@ class MoipCheckout {
     return $response;
   }
 
+  public function getParcAnswer(){
+    $curl = $this->getParcCurl();
+    $response = curl_exec($curl);
+    $response = json_decode(substr($response, 1, -1)); // substr remove parenteses
+
+    return $response;
+  }
+
+  public function getParcCurl(){
+    $qs = $this->getQuery('parc');
+    $url = $this->resolveUrl('/rest/pagamento/consultarparcelamento?' . http_build_query($qs));
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  
+    return $ch;
+  }
+
   public function getCurl(){
     $qs = $this->getQuery();
     $url = $this->resolveUrl('/rest/pagamento?' . http_build_query($qs));
@@ -83,17 +100,26 @@ class MoipCheckout {
     return $ch;
   }
 
-  public function getQuery(){
-    return array(
-      'callback' => '',
-      'pagamentoWidget' => json_encode(array(
-        'pagamentoWidget' => array(
-          'token' => $this->token,
-          'dadosPagamento' => $this->data,
-          'referer' => $this->getReferer()
-        )
-      ))
-    );
+  public function getQuery($type = null){
+    if (empty($type))
+    {
+      return array(
+        'callback' => '',
+        'pagamentoWidget' => json_encode(array(
+          'pagamentoWidget' => array(
+            'token' => $this->token,
+            'dadosPagamento' => $this->data,
+            'referer' => $this->getReferer()
+          )
+        ))
+      );
+    } else if ($type == 'parc'){
+      return array(
+        'callback' => '',
+        'token' => $this->token,
+        'instituicao' => 'Visa',
+        );
+    }
   }
 
   private function resolveUrl($url){
@@ -101,7 +127,7 @@ class MoipCheckout {
   }
 
   private function getReferer(){
-    if($_SERVER['HTTP_REFERER']){
+    if(@$_SERVER['HTTP_REFERER']){
       return $_SERVER['HTTP_REFERER'];
     }else{
       return ((stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
